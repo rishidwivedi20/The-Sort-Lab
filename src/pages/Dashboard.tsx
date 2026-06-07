@@ -105,7 +105,7 @@ export const Dashboard: React.FC = () => {
               <rect x="38" y="12" width="6" height="40" rx="3" fill="#58A6FF" />
               <rect x="50" y="24" width="6" height="28" rx="3" fill="#3FB950" />
             </svg>
-            <h1 className="text-lg font-semibold tracking-tight text-text hidden sm:block">The Sorting Lab</h1>
+            <h1 className="text-lg font-semibold tracking-tight text-text hidden sm:block">The Sort Lab</h1>
           </div>
           
           <div className="flex bg-background border border-border p-1 rounded-lg">
