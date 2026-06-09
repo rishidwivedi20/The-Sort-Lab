@@ -19,10 +19,12 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ algorithmIds }) 
   const [initialArray, setInitialArray] = useState<ArrayItem[]>([]);
   const [stepsA, setStepsA] = useState<any[]>([]);
   const [stepsB, setStepsB] = useState<any[]>([]);
+  const [metricsA, setMetricsA] = useState<any>(undefined);
+  const [metricsB, setMetricsB] = useState<any>(undefined);
   const [loading, setLoading] = useState(false);
 
-  const controllerA = useSortController({ steps: stepsA, initialArray });
-  const controllerB = useSortController({ steps: stepsB, initialArray });
+  const controllerA = useSortController({ steps: stepsA, initialArray, workerMetrics: metricsA });
+  const controllerB = useSortController({ steps: stepsB, initialArray, workerMetrics: metricsB });
 
   const generateAndPrepare = useCallback(async () => {
     setLoading(true);
@@ -39,6 +41,8 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ algorithmIds }) 
       ]);
       setStepsA(resA.steps);
       setStepsB(resB.steps);
+      setMetricsA(resA.metrics);
+      setMetricsB(resB.metrics);
     } catch (err) {
       console.error(err);
     } finally {
@@ -67,13 +71,19 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ algorithmIds }) 
 
   const isPlaying = controllerA.isPlaying || controllerB.isPlaying;
 
-  let winner = null;
+  let winner: AlgorithmId | 'tie' | null = null;
   if (controllerA.isFinished && controllerB.isFinished) {
     // Winner based on execution time
     if (stepsA.length && stepsB.length) {
-      // Actually real time metrics from the worker:
-      // controllerA.metrics.executionTimeMs vs controllerB.metrics.executionTimeMs
-      winner = controllerA.metrics.executionTimeMs <= controllerB.metrics.executionTimeMs ? algoA : algoB;
+      const timeA = controllerA.metrics.executionTimeMs;
+      const timeB = controllerB.metrics.executionTimeMs;
+      if (timeA < timeB) {
+        winner = algoA;
+      } else if (timeB < timeA) {
+        winner = algoB;
+      } else {
+        winner = 'tie';
+      }
     }
   }
 
@@ -111,9 +121,14 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ algorithmIds }) 
         </div>
       </div>
 
-      {winner && (
+      {winner && winner !== 'tie' && (
         <div className="bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 px-4 py-3 rounded-lg text-center font-medium">
           🏆 Winner: {ALGORITHM_INFO[winner].name} completed faster!
+        </div>
+      )}
+      {winner === 'tie' && (
+        <div className="bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 px-4 py-3 rounded-lg text-center font-medium">
+          🤝 It's a Tie! Both completed in the same execution time.
         </div>
       )}
 

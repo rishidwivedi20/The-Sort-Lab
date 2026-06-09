@@ -24,12 +24,14 @@ export const Dashboard: React.FC = () => {
   const [algorithmId, setAlgorithmId] = useState<AlgorithmId>('bubble');
   const [initialArray, setInitialArray] = useState<ArrayItem[]>([]);
   const [steps, setSteps] = useState<any[]>([]);
+  const [workerMetrics, setWorkerMetrics] = useState<any>(undefined);
   const [loading, setLoading] = useState(false);
   const [showStabilityLabels, setShowStabilityLabels] = useState(false);
 
   const controller = useSortController({
     steps,
     initialArray,
+    workerMetrics,
   });
 
   const generateAndPrepare = useCallback(async (size: number, distribution: ArrayDistribution) => {
@@ -42,6 +44,7 @@ export const Dashboard: React.FC = () => {
     try {
       const res = await runSortWorker(algorithmId, newArray);
       setSteps(res.steps);
+      setWorkerMetrics(res.metrics);
     } catch (err) {
       console.error(err);
     } finally {
@@ -57,6 +60,7 @@ export const Dashboard: React.FC = () => {
     try {
       const res = await runSortWorker(algorithmId, customArray);
       setSteps(res.steps);
+      setWorkerMetrics(res.metrics);
     } catch (err) {
       console.error(err);
     } finally {
@@ -80,6 +84,7 @@ export const Dashboard: React.FC = () => {
         try {
           const res = await runSortWorker(algorithmId, initialArray);
           setSteps(res.steps);
+          setWorkerMetrics(res.metrics);
         } catch (err) {
           console.error(err);
         } finally {

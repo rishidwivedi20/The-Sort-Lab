@@ -4,10 +4,11 @@ import { SortStep, SortMetrics, ArrayItem } from '../types';
 interface UseSortControllerProps {
   steps: SortStep[];
   initialArray: ArrayItem[];
+  workerMetrics?: SortMetrics;
   onFinish?: () => void;
 }
 
-export function useSortController({ steps, initialArray, onFinish }: UseSortControllerProps) {
+export function useSortController({ steps, initialArray, workerMetrics, onFinish }: UseSortControllerProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(-1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speedMultiplier, setSpeedMultiplier] = useState<number>(1);
@@ -57,8 +58,13 @@ export function useSortController({ steps, initialArray, onFinish }: UseSortCont
       else if (steps[i].type === 'swap') swps++;
       else if (steps[i].type === 'write') wrts++;
     }
-    setMetrics(prev => ({ ...prev, comparisons: comps, swaps: swps, writes: wrts }));
-  }, [currentStepIndex, steps]);
+    setMetrics({ 
+      comparisons: comps, 
+      swaps: swps, 
+      writes: wrts,
+      executionTimeMs: workerMetrics?.executionTimeMs || 0
+    });
+  }, [currentStepIndex, steps, workerMetrics]);
 
   useEffect(() => {
     if (isPlaying) {
