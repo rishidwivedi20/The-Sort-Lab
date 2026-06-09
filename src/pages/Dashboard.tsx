@@ -150,7 +150,13 @@ export const Dashboard: React.FC = () => {
             <button onClick={toggleTheme} className="btn-ghost p-2 rounded-full" title="Toggle Theme">
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-            <a href="#" className="btn-ghost p-2 rounded-full hidden sm:flex" title="Source Code">
+            <a 
+              href="https://github.com/rishidwivedi20/The-Sort-Lab" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="btn-ghost p-2 rounded-full hidden sm:flex" 
+              title="Source Code"
+            >
               <Code2 size={20} />
             </a>
           </div>
